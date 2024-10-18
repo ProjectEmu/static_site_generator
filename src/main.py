@@ -9,7 +9,7 @@ TEMPLATE_PATH = "./template.html"
 def main():
 
     copy_files("static", "public", clean_dest=True, log_to_console=True)
-    generate_page("content/index.md", TEMPLATE_PATH, "public")
+    generate_pages_recursive("content", TEMPLATE_PATH, "public")
     pass
 
 

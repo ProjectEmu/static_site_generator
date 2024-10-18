@@ -1,5 +1,6 @@
 import os
 import shutil
+from converters import *
 
 
 def copy_files(src_dir, dest_dir, log_to_console=False, clean_dest=False):
@@ -39,27 +40,29 @@ def copy_files(src_dir, dest_dir, log_to_console=False, clean_dest=False):
 # copy_files("/path/to/source", "/path/to/destination", log_to_console=True, clean_dest=True)
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, root_dir):
     # Read the markdown file into a string
     with open(from_path, "r") as file:
         content = file.read()
 
     # Placeholder for parsing logic (could be converting markdown to HTML)
-    parsed_content = (
-        f"<html><body>{content}</body></html>"  # Replace with actual parsing logic
-    )
+    title = extract_title(content)
+    parsed_content = markdown_to_html(content).to_html()
 
     # Read the HTML template into a string
     with open(template_path, "r") as template_file:
         template_content = template_file.read()
 
     # Combine template and parsed content (placeholder)
-    full_content = template_content.replace("{{ content }}", parsed_content)
 
-    # Determine the new file path in the destination directory
-    relative_path = os.path.relpath(from_path, os.path.commonpath([from_path]))
-    dest_file_path = os.path.join(dest_path, relative_path)
-    dest_file_path = os.path.splitext(dest_file_path)[0] + ".html"
+    full_content = template_content.replace("{{ Title }}", title)
+    full_content = full_content.replace("{{ Content }}", parsed_content)
+
+    # Determine the new file path in the destination directory (excluding the root folder)
+    relative_path = os.path.relpath(from_path, root_dir)
+    dest_file_path = os.path.join(
+        dest_path, os.path.splitext(relative_path)[0] + ".html"
+    )
 
     # Ensure destination directory exists
     os.makedirs(os.path.dirname(dest_file_path), exist_ok=True)
@@ -70,11 +73,11 @@ def generate_page(from_path, template_path, dest_path):
 
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
-    for root, _, files in os.walk(dir_path_content):
+    for root, dirs, files in os.walk(dir_path_content):
         for file in files:
             if file.endswith(".md"):  # Look for markdown files
                 from_path = os.path.join(root, file)
-                generate_page(from_path, template_path, dest_dir_path)
+                generate_page(from_path, template_path, dest_dir_path, dir_path_content)
 
 
 # Example usage
