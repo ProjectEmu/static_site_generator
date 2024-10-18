@@ -18,8 +18,8 @@ class TestTextNode(unittest.TestCase):
         self.assertNotEqual(node3, node2)
 
     def test_inequality_different_text(self):
-        node = TextNode("This is a text node", TextType.NORMAL)
-        node_diff_text = TextNode("Different text", TextType.NORMAL)
+        node = TextNode("This is a text node", TextType.TEXT)
+        node_diff_text = TextNode("Different text", TextType.TEXT)
 
         # Test inequality when text is different
         self.assertNotEqual(node, node_diff_text)
@@ -32,9 +32,9 @@ class TestTextNode(unittest.TestCase):
         self.assertNotEqual(node_bold, node_italic)
 
     def test_url_none(self):
-        node_with_none_url = TextNode("This is a text node", TextType.NORMAL)
+        node_with_none_url = TextNode("This is a text node", TextType.TEXT)
         node_with_url = TextNode(
-            "This is a text node", TextType.NORMAL, "https://example.com"
+            "This is a text node", TextType.TEXT, "https://example.com"
         )
 
         # Test inequality when one URL is None
